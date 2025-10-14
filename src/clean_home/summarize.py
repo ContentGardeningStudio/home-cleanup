@@ -1,0 +1,6 @@
+# TODO: Summaries (pure).
+# def summarize(files) -> dict:
+#   return {"count": int, "total_bytes": int, "by_reason": {...}}
+#
+# def to_human(stats) -> str: ...
+# def to_json(stats) -> str: ...

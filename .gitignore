@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Tooling
+*.log
+
+# App
+_quarantine/

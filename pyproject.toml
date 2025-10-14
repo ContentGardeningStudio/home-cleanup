@@ -1,0 +1,18 @@
+[build-system]
+# TODO: choose build backend (e.g., "setuptools.build_meta")
+requires = ["setuptools>=68"]
+
+[project]
+name = "clean-home"
+version = "0.0.0"
+description = "Dry-run cleanup CLI"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "YOUR NAME" }]
+dependencies = [
+  # TODO: add runtime deps if any (keep stdlib if possible)
+]
+
+[project.scripts]
+# TODO: optional console script entry point
+# clean-home = "clean_home.__main__:main"
