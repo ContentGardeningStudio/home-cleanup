@@ -10,6 +10,7 @@
 # NOTE: keep functions small; avoid side effects in helpers.
 
 import argparse
+from pathlib import Path
 
 
 def parse_args():
@@ -30,3 +31,14 @@ def parse_args():
     parser.add_argument("-v", "--verbose", action="count",
                         default=0, help="Increase verbosity (-v, -vv)")
     return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    root = Path(args.path).expanduser()
+    move_to = Path(args.move_to).expanduser()
+    print(root)
+
+
+if __name__ == "__main__":
+    main()
