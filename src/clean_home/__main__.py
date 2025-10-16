@@ -20,7 +20,7 @@ def parse_args():
         description="Simulate or perform cleanup of large/old files."
     )
     parser.add_argument("-path", type=Path,
-                        default=Path.home(), help=f"Folder to scan (default: {Path.home()}")
+                        default=Path.home(), help=f"Folder to scan (default: {Path.home()})")
     parser.add_argument("-min-size-mb", type=int, default=0,
                         help="Minimum file size in MB")
     parser.add_argument("-older-than-days", type=int,
