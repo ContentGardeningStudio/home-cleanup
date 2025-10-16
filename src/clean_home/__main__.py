@@ -13,6 +13,9 @@ import argparse
 import logging
 from pathlib import Path
 import os
+from datetime import datetime, timedelta
+from . import scanner
+from .logging_conf import setup_logging
 
 
 def parse_args():
@@ -25,7 +28,7 @@ def parse_args():
                         help="Minimum file size in MB")
     parser.add_argument("-older-than-days", type=int,
                         default=0, help="Older than X days")
-    parser.add_argument("-move-to", type=Path, default="~/cleaned",
+    parser.add_argument("-move-to", type=Path, default="~/_quarantine",
                         help="Destination directory")
     parser.add_argument("-exclude", action="append",
                         default=[], help="Exclude pattern(s)")
@@ -38,22 +41,46 @@ def parse_args():
 
 
 def main():
+    setup_logging()
+    logging.info("App starting: Initializing arguments.")
+
     args = parse_args()
 
-    # --- Validation ---
+    # --- Validation of arguments ---
     if not args.path.is_dir():
-        logging.error(f"Error: Path is not a valid directory: {args.path}")
+        logging.error(f" Path is not a valid directory: {args.path}")
         return
 
     if args.really and not args.move_to:
         logging.error(
-            "Error: The '-move-to' argument is required when using '-really'.")
+            " The '-move-to' argument is required when using '-really'.")
         return
 
-    root = Path(args.path).expanduser()
-    move_to = Path(args.move_to).expanduser()
-    # print(root)
-    # logging.info("Scanning %s", root)
+    # Calculate the cutoff timestamp
+    cutoff_time = datetime.now() - timedelta(days=args.older_than_days)
+
+    logging.info(f"Starting scan in: {args.path}")
+    logging.info(
+        f"Criteria: > {args.min_size_mb}MB OR older than {args.older_than_days} days.")
+
+    # call the scanner module
+    eligible_files, summary = scanner.scan_directory(
+        root_dir=args.path,
+        min_size_bytes=args.min_size_mb * 1024 * 1024,
+        cutoff_time=cutoff_time,
+        exclude_patterns=args.exclude
+    )
+
+    print(f"\n--- Scan Summary ---")
+    print(f"Total files found: {summary['total_files']:,}")
+    print(
+        f"Total size found: {summary['total_size'] / (1024*1024*1024):.2f} GB")
+    print(f"Files eligible for action: {len(eligible_files):,}")
+    print(
+        f"Total size of eligible files: {sum(f.stat().st_size for f in eligible_files) / (1024*1024*1024):.2f} GB")
+    print(f"Mode: {'REAL ACTION' if args.really else 'DRY-RUN'}")
+    print(f"Move Target: {args.move_to or 'N/A'}")
+    print(f"--------------------\n")
 
 
 if __name__ == "__main__":
