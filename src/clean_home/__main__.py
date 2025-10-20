@@ -14,7 +14,7 @@ import logging
 from pathlib import Path
 import os
 from datetime import datetime, timedelta
-from . import scanner
+from . import scanner, actions
 from .logging_conf import setup_logging
 
 
@@ -23,11 +23,11 @@ def parse_args():
         description="Simulate or perform cleanup of large/old files."
     )
     parser.add_argument("-path", type=Path,
-                        default=Path.home(), help=f"Folder to scan (default: {Path.home()})")
-    parser.add_argument("-min-size-mb", type=int, default=0,
+                        default=Path.cwd(), help=f"Folder to scan (default: {Path.cwd()})")
+    parser.add_argument("-min-size-mb", type=int, default=90,
                         help="Minimum file size in MB")
     parser.add_argument("-older-than-days", type=int,
-                        default=0, help="Older than X days")
+                        default=90, help="Older than X days")
     parser.add_argument("-move-to", type=Path, default="~/_quarantine",
                         help="Destination directory")
     parser.add_argument("-exclude", action="append",
@@ -81,6 +81,14 @@ def main():
     print(f"Mode: {'REAL ACTION' if args.really else 'DRY-RUN'}")
     print(f"Move Target: {args.move_to or 'N/A'}")
     print(f"--------------------\n")
+    if eligible_files:
+        actions.perform_actions(
+            eligible_files=eligible_files,
+            move_target=args.move_to,
+            is_dry_run=not args.really
+        )
+    else:
+        logging.info("No files found that match the criteria.")
 
 
 if __name__ == "__main__":

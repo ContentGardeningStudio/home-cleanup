@@ -75,12 +75,21 @@ def scan_directory(root_dir: Path, min_size_bytes: int, cutoff_time: datetime, e
             # Skip excluded files
             if _should_ignore_file(file_path, exclude_patterns):
                 continue
+            try:
+                # Get stats for summary
+                stat_info = file_path.stat()
+                summary['total_files'] += 1
+                summary['total_size'] += stat_info.st_size
 
-            # Get stats for summary
-            stat_info = file_path.stat()
-            summary['total_files'] += 1
-            summary['total_size'] += stat_info.st_size
+                if _is_eligible(file_path, min_size_bytes, cutoff_time):
+                    eligible_files.append(file_path)
+            except FileNotFoundError:
+                # File was deleted between os.walk listing and stat() call
+                logging.warning(
+                    f"File disappeared during scan (skipping): {file_path}")
 
-            if _is_eligible(file_path, min_size_bytes, cutoff_time):
-                eligible_files.append(file_path)
+            except OSError as e:
+                # Handles PermissionError and other generic OS issues
+                logging.warning(f"Error accessing {file_path}: {e}")
+
     return eligible_files, summary
