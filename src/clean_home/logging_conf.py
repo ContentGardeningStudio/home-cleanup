@@ -16,8 +16,8 @@ def setup_logging(verbosity: int = 0) -> None:
         2 = DEBUG
     """
     # Map verbosity to logging levels
-    if verbosity <= 0:
-        level = logging.INFO
+    if verbosity == 0:
+        level = logging.WARNING
     elif verbosity == 1:
         level = logging.INFO
     else:

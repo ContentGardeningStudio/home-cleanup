@@ -41,10 +41,11 @@ def parse_args():
 
 
 def main():
-    setup_logging()
-    logging.info("App starting: Initializing arguments.")
-
     args = parse_args()
+
+    setup_logging(args.verbose)
+
+    logging.info("App starting: Initializing arguments.")
 
     # --- Validation of arguments ---
     if not args.path.is_dir():
