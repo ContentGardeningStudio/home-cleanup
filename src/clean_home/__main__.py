@@ -61,7 +61,7 @@ def main():
 
     logging.info(f"Starting scan in: {args.path}")
     logging.info(
-        f"Criteria: > {args.min_size_mb}MB OR older than {args.older_than_days} days.")
+        f"Criteria: > {args.min_size_mb}MB and older than {args.older_than_days} days.")
 
     # call the scanner module
     eligible_files, summary = scanner.scan_directory(
@@ -81,6 +81,7 @@ def main():
     print(f"Mode: {'REAL ACTION' if args.really else 'DRY-RUN'}")
     print(f"Move Target: {args.move_to or 'N/A'}")
     print(f"--------------------\n")
+
     if eligible_files:
         actions.perform_actions(
             eligible_files=eligible_files,

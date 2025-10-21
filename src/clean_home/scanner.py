@@ -31,15 +31,12 @@ def _is_eligible(file_path: Path, min_size_bytes: int, cutoff_time: datetime) ->
 
     try:
         stat_info = file_path.stat()
+        modified_time = datetime.fromtimestamp(stat_info.st_mtime)
 
         # check difference in size
-        if stat_info.st_size > min_size_bytes:
-            return True
-
         # check difference in age
         # Convert timestamp (seconds since epoch) to datetime object
-        modified_time = datetime.fromtimestamp(stat_info.st_mtime)
-        if modified_time < cutoff_time:
+        if stat_info.st_size > min_size_bytes and modified_time < cutoff_time:
             return True
 
     except OSError as e:
