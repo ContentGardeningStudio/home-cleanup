@@ -11,6 +11,7 @@ requires-python = ">=3.10"
 authors = [{ name = "CGS Team" }]
 dependencies = [
   # TODO: add runtime deps if any (keep stdlib if possible)
+  "pytest-mock>=3.15.1",
 ]
 
 [project.scripts]
