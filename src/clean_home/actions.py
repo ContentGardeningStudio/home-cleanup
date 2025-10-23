@@ -57,3 +57,4 @@ def perform_actions(eligible_files: list[Path], move_target: Path, is_dry_run: b
     logging.info(f"Successfully moved: {success_count}")
     # Use error level for visibility
     logging.error(f"Failed to move: {fail_count}")
+    return {'files_moved': success_count, "files_failed": fail_count}
