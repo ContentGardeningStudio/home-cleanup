@@ -48,39 +48,48 @@ def test_scan_directory_with_mocks(mocker, eligibility_criteria, exclude_pattern
     """Test that scan_directory correctly finds eligible files and ignores excluded ones."""
     min_size, cutoff_time = eligibility_criteria
 
-    '''Simulate a directory'''
+    # Simulate a directory
     mocker.patch(
         "os.walk",
         return_value=[
             ("/root", ["temp", ".git"], ["a.txt", "b.log"]),
             ("/root/temp", [], ["c.txt"]),
-        ]
-    )
-    '''Simulate file eligibility'''
-    mocker.patch(
-        "clean_home.scanner._is_eligible",
-        return_value=[True, False, True]
+        ],
     )
 
-    '''Simulate the file size'''
+    # Mock _is_eligible
+    def fake_is_eligible(path, *_, **__):
+        return Path(path).name in ("a.txt", "c.txt")
 
-    mocker.patch(
-        "pathlib.Path.stat",
-        side_effect=[
-            MagicMock(st_size=1000),  # a.txt
-            MagicMock(st_size=500),   # b.log
-            MagicMock(st_size=2000),  # c.txt
-        ]
-    )
+    mocker.patch("clean_home.scanner._is_eligible",
+                 side_effect=fake_is_eligible)
 
-    # Execution
+    # Patch Path.stat ONLY for the duration of scan_directory
+    original_stat = Path.stat
+
+    def fake_stat(self):
+        sizes = {"a.txt": 1000, "b.log": 500, "c.txt": 2000}
+        m = MagicMock()
+        m.st_size = sizes.get(self.name, 0)
+        m.st_mode = 0o100644  # valid int for pytest internal use
+        return m
+
+    mocker.patch("clean_home.scanner.Path.stat", new=fake_stat)
+
+    # Run the function under test
     eligible, summary = scan_directory(
         root_dir=Path("/root"),
         min_size_bytes=min_size,
         cutoff_time=cutoff_time,
-        exclude_patterns=exclude_patterns
+        exclude_patterns=exclude_patterns,
     )
 
-    assert len(eligible) == 2  # a.txt et c.txt are eligible
-    assert summary["total_files"] == 3
-    assert summary["total_size"] == 3500
+    # Restore original stat (protects pytest teardown)
+    Path.stat = original_stat
+
+    # Assertions
+    assert len(eligible) == 2
+    expected_total = 2 if exclude_patterns else 3
+    expected_total_size = 3000 if exclude_patterns else 3500
+    assert summary["total_files"] == expected_total
+    assert summary["total_size"] == expected_total_size
