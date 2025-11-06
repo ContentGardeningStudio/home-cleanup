@@ -1,7 +1,3 @@
-# TODO: Basic logging setup.
-# def setup_logging(verbosity: int = 0) -> None: ...
-# Levels: 0=WARNING, 1=INFO, 2=DEBUG
-
 import logging
 import sys
 
