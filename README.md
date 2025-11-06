@@ -1,42 +1,110 @@
-# Home Cleanup Dry-Run
+<h1 align="center">🧹 Home Cleanup CLI</h1>
+<p align="center">
+  Smart file cleanup for your home directory — <strong>safe by default</strong> (dry-run mode).  
+  <br/>
+  Move, quarantine, or summarize large / old files with confidence.
+</p>
 
-> CLI that scans a directory and **simulates** cleanup (dry-run by default).
-> Moves files only if `--really` is passed.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.9%2B-blue?style=flat-square" />
+  <img src="https://img.shields.io/github/license/ContentGardeningStudio/home-cleanup?style=flat-square&color=green" />
+  <img src="https://img.shields.io/github/stars/ContentGardeningStudio/home-cleanup?style=flat-square&color=yellow" />
+</p>
 
-## Objectives
-- Practice `os`, `pathlib`, `argparse`, `logging`.
-- Separate pure logic (scan, filter, summarize) from side effects (moves).
+---
 
-## CLI (target)
-- `--path PATH` (default: home)
-- `--min-size-mb INT` (default: 50)
-- `--older-than-days INT` (default: 90)
-- `--move-to PATH` (default: ./_quarantine)
-- `--exclude PATTERN` (repeatable; e.g., `--exclude "*.log"`)
-- `--really` (perform moves)
-- `--format human|json` (default: human)
+## 🧭 Overview
 
-## Getting Started
-- [ ] Create virtual env
-- [ ] Install deps (`pip install -e .` once defined)
-- [ ] Run: `python -m clean_home --help` (after implementing)
+**Home Cleanup** is a command-line tool that scans your filesystem and identifies large or old files for potential cleanup.  
+By default, it runs in **dry-run mode** — simulating what would happen before any files are actually moved.  
 
-## Architecture (high level)
-- `scanner.py` → walk filesystem, collect `FileInfo` dicts
-- `filters.py` → pure functions to decide "candidate?"
-- `summarize.py` → counts, total sizes
-- `actions.py` → dry-run log vs. real move
-- `logging_conf.py` → logging setup
-- `__main__.py` → argument parsing + orchestration
+When you’re confident, just add the `--really` flag to perform the moves.
 
-## Acceptance Criteria
-- [ ] Dry-run prints actions, no changes by default
-- [ ] Real run creates `--move-to` if missing and moves candidates
-- [ ] Respect excludes + denylist (e.g., `.git`, `node_modules`)
-- [ ] Clear summary at end (counts + size)
-- [ ] Graceful errors (permissions, missing paths)
+> ⚙️ Ideal for developers, sysadmins, or power users who want to declutter large directories safely.
 
-## Stretch (optional)
-- [ ] Glob patterns for excludes and subpaths
-- [ ] Progress indicator (simple % on stdout)
-- [ ] JSON output for scripting
+
+## ⚙️ Quickstart
+
+```bash
+git clone https://github.com/ContentGardeningStudio/home-cleanup
+cd home-cleanup
+python -m venv .venv
+source .venv/bin/activate  # or .\.venv\Scripts\activate on Windows
+pip install -e .
+python -m clean_home --help
+```
+
+
+## 🧰 CLI Usage
+
+```bash
+python -m clean_home --path ~/Downloads --older-than-days 90 --min-size-mb 50
+```
+
+| Flag | Description | Default |
+|------|--------------|----------|
+| `--path PATH` | Target directory to scan | `~/` |
+| `--min-size-mb INT` | Minimum file size | `50 MB` |
+| `--older-than-days INT` | Minimum file age | `90 days` |
+| `--move-to PATH` | Destination for moved files | `./_quarantine` |
+| `--exclude PATTERN` | Glob pattern to exclude (repeatable) | `None` |
+| `--really` | Perform actual move (disable dry-run) | Off |
+| `--format human|json` | Output format | `human` |
+
+
+## 🧩 Architecture
+
+```
+clean_home/
+ ┣ 📄 __main__.py
+ ┣ 📄 scanner.py
+ ┣ 📄 filters.py
+ ┣ 📄 summarize.py
+ ┣ 📄 actions.py
+ ┗ 📄 logging_conf.py
+```
+
+
+## 📊 Output Examples
+
+### Human Format
+```
+Found 12 candidates (1.2 GB total)
+  /Users/alex/Downloads/old_backup.zip (600 MB, 180 days old)
+  /Users/alex/Movies/recording.mov (420 MB, 270 days old)
+Dry-run only — no files were moved.
+```
+
+### JSON Format
+```json
+{
+  "candidates": 12,
+  "total_size_mb": 1200,
+  "files": [
+    {"path": "...", "size_mb": 600, "days_old": 180}
+  ]
+}
+```
+
+
+## 🧠 Learning Objectives
+
+- Practice Python’s standard libs: `os`, `pathlib`, `argparse`, `logging`
+- Separate pure logic from side effects
+- Implement safe dry-run vs real mode
+
+
+## 🤝 Contributing
+
+Pull requests and ideas welcome!
+
+1. Fork the repo  
+2. Create a feature branch (`git checkout -b feature/new-filter`)  
+3. Commit your changes  
+4. Open a PR 🚀  
+
+
+## 📜 License
+
+Licensed under the [MIT License](LICENSE).  
+© 2025 [Content Gardening Studio](https://github.com/ContentGardeningStudio) — small, focused tools for modern dev workflows.
