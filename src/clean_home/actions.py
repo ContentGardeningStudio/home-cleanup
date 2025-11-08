@@ -7,19 +7,21 @@ def perform_actions(eligible_files: list[Path], move_target: Path, is_dry_run: b
     """Logs actions in dry-run or performs actual file moves."""
 
     if is_dry_run:
-        logging.info(
-            "\n*** DRY-RUN: Listing actions that would be performed: ***")
+        logging.info("\n*** DRY-RUN: Listing actions that would be performed: ***")
         for file in eligible_files:
             size_mb = file.stat().st_size / (1024 * 1024)
             logging.info(
-                f"[DRY-RUN] Would move {file} (Size: {size_mb:.2f} MB) to {move_target}")
+                f"[DRY-RUN] Would move {file} (Size: {size_mb:.2f} MB) to {move_target}"
+            )
         logging.info(
-            "*** DRY-RUN Complete. To perform action, re-run with -really. ***")
+            "*** DRY-RUN Complete. To perform action, re-run with -really. ***"
+        )
         return
 
     # --- Real Action ---
     logging.info(
-        f"\n*** REAL ACTION: Moving {len(eligible_files)} files to {move_target} ***")
+        f"\n*** REAL ACTION: Moving {len(eligible_files)} files to {move_target} ***"
+    )
 
     # Ensure the target directory exists (Constraint: create if missing)
     try:
@@ -47,8 +49,8 @@ def perform_actions(eligible_files: list[Path], move_target: Path, is_dry_run: b
             logging.error(f"[ERROR] Failed to move {file}: {e}")
             fail_count += 1
 
-    logging.info(f"\n*** ACTION COMPLETE ***")
+    logging.info("\n*** ACTION COMPLETE ***")
     logging.info(f"Successfully moved: {success_count}")
     # Use error level for visibility
     logging.error(f"Failed to move: {fail_count}")
-    return {'files_moved': success_count, "files_failed": fail_count}
+    return {"files_moved": success_count, "files_failed": fail_count}

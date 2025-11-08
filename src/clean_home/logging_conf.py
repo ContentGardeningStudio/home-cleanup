@@ -24,8 +24,7 @@ def setup_logging(verbosity: int = 0) -> None:
         level=level,
         format="%(asctime)s [%(levelname)s] %(message)s",
         datefmt="%H:%M:%S",
-        handlers=[logging.StreamHandler(sys.stdout)]
+        handlers=[logging.StreamHandler(sys.stdout)],
     )
 
-    logging.debug("Logging initialized at %s level",
-                  logging.getLevelName(level))
+    logging.debug("Logging initialized at %s level", logging.getLevelName(level))

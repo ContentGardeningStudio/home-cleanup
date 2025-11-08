@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clean-home"
-version = "0.0.1"
+version = "0.0.2"
 description = "Dry-run cleanup CLI"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,3 +17,7 @@ dependencies = [
 [project.scripts]
 # TODO: optional console script entry point
 # clean-home = "clean_home.__main__:main"
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+skips = ["B101"]

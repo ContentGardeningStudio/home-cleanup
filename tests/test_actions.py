@@ -1,6 +1,5 @@
 from clean_home.actions import perform_actions
 from unittest.mock import patch
-from pathlib import Path
 import logging
 
 # let logging be in a quietmode
@@ -41,17 +40,16 @@ def test_real_move_failure_handling(move_setup):
     eligible_files, move_to_dir, source_dir = move_setup
 
     # Patch shutil.move to fail on the first file, but succeed on the second (by passing)
-    with patch('shutil.move') as mock_move:
+    with patch("shutil.move") as mock_move:
         # Side effect sequence: Error on first call, then pass (return None)
         mock_move.side_effect = [OSError("Test: Disk full"), None]
 
         # Act: This should attempt two moves and log one failure
-        summary = perform_actions(
-            eligible_files, move_to_dir, is_dry_run=False)
+        summary = perform_actions(eligible_files, move_to_dir, is_dry_run=False)
 
     # Assert:
     # 1. Ensure the move was attempted for ALL eligible files
     assert mock_move.call_count == len(eligible_files)
     # 2. Ensure the summary reflects the failure and success
-    assert summary['files_failed'] == 1
-    assert summary['files_moved'] == 1
+    assert summary["files_failed"] == 1
+    assert summary["files_moved"] == 1

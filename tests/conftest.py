@@ -13,6 +13,7 @@ def eligibility_criteria():
     CUTOFF_TIME = datetime.now() - timedelta(days=30)
     return MIN_SIZE_BYTES, CUTOFF_TIME
 
+
 # --- Fixture for File Action Tests (I/O) ---
 
 
@@ -31,10 +32,10 @@ def move_setup(tmp_path: Path):
     small_new_file = source_dir / "small_new.txt"
 
     # File 1: Large (200MB)
-    old_large_file.write_bytes(b'0' * (200 * 1024 * 1024))
+    old_large_file.write_bytes(b"0" * (200 * 1024 * 1024))
 
     # File 2: Small (1KB)
-    small_new_file.write_bytes(b'1' * 1024)
+    small_new_file.write_bytes(b"1" * 1024)
 
     eligible_files = [old_large_file, small_new_file]
 

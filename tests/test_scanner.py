@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime, timedelta
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from pathlib import Path
 
 from clean_home.scanner import _is_eligible, scan_directory
@@ -11,10 +11,10 @@ def make_mock_path(size: int, age_days: int):
     mock_path = MagicMock(spec=Path)
     mock_stat = MagicMock()
     mock_stat.st_size = size
-    mock_stat.st_mtime = (
-        datetime.now() - timedelta(days=age_days)).timestamp()
+    mock_stat.st_mtime = (datetime.now() - timedelta(days=age_days)).timestamp()
     mock_path.stat.return_value = mock_stat
     return mock_path
+
 
 # --- Unit test of eligibilty
 
@@ -40,6 +40,7 @@ def test_file_access_error_handled(eligibility_criteria):
     mock_path.stat.side_effect = OSError("Permission denied")
     assert _is_eligible(mock_path, min_size, cutoff_time) is False
 
+
 # Unit test for scan directory
 
 
@@ -61,8 +62,7 @@ def test_scan_directory_with_mocks(mocker, eligibility_criteria, exclude_pattern
     def fake_is_eligible(path, *_, **__):
         return Path(path).name in ("a.txt", "c.txt")
 
-    mocker.patch("clean_home.scanner._is_eligible",
-                 side_effect=fake_is_eligible)
+    mocker.patch("clean_home.scanner._is_eligible", side_effect=fake_is_eligible)
 
     # Patch Path.stat ONLY for the duration of scan_directory
     original_stat = Path.stat
