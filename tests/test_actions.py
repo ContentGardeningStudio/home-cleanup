@@ -47,7 +47,6 @@ def test_real_move_failure_handling(move_setup):
         # Act: This should attempt two moves and log one failure
         summary = perform_actions(eligible_files, move_to_dir, is_dry_run=False)
 
-    # Assert:
     # 1. Ensure the move was attempted for ALL eligible files
     assert mock_move.call_count == len(eligible_files)
     # 2. Ensure the summary reflects the failure and success

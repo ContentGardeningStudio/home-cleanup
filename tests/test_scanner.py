@@ -16,9 +16,6 @@ def make_mock_path(size: int, age_days: int):
     return mock_path
 
 
-# --- Unit test of eligibilty
-
-
 def test_file_eligible(eligibility_criteria):
     """Should be eligible if size exceeds threshold."""
     min_size, cutoff_time = eligibility_criteria
@@ -39,9 +36,6 @@ def test_file_access_error_handled(eligibility_criteria):
     mock_path = MagicMock(spec=Path)
     mock_path.stat.side_effect = OSError("Permission denied")
     assert _is_eligible(mock_path, min_size, cutoff_time) is False
-
-
-# Unit test for scan directory
 
 
 @pytest.mark.parametrize("exclude_patterns", [[], ["*.log"]])
@@ -87,7 +81,6 @@ def test_scan_directory_with_mocks(mocker, eligibility_criteria, exclude_pattern
     # Restore original stat (protects pytest teardown)
     Path.stat = original_stat
 
-    # Assertions
     assert len(eligible) == 2
     expected_total = 2 if exclude_patterns else 3
     expected_total_size = 3000 if exclude_patterns else 3500
