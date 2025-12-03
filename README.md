@@ -104,6 +104,13 @@ Pull requests and ideas welcome!
 4. Open a PR 🚀  
 
 
+## 🔗 Join Our Skool Community
+
+We help MVP builders ship better. Join our Skool community for feedback, technical guidance, and deep-dive discussions to level up your project.
+
+👉 Join here: https://www.skool.com/onboard-or-join-a-tech-team
+
+
 ## 📜 License
 
 Licensed under the [MIT License](LICENSE).  
